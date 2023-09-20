@@ -25,13 +25,13 @@ router.get("/", async (req, res) => {
 
 // POST create a new todo
 router.post("/", async (req, res) => {
-  const { task } = req.body;
+  const { value } = req.body;
 
   try {
     const client = await pool.connect();
     const result = await client.query(
-      "INSERT INTO public.todo (task, status) VALUES ($1, $2) RETURNING *",
-      [task, 0]
+      "INSERT INTO public.todo (value, status) VALUES ($1, $2) RETURNING *",
+      [value, 0]
     );
     res.status(201).send(result.rows[0]);
     client.release();
@@ -44,13 +44,13 @@ router.post("/", async (req, res) => {
 // PUT update an existing todo by ID
 router.put("/:id", async (req, res) => {
   const todoId = req.params.id;
-  const { task } = req.body;
+  const { value } = req.body;
 
   try {
     const client = await pool.connect();
     const result = await client.query(
-      "UPDATE public.todo SET title = $1, description = $2 WHERE id = $3 RETURNING *",
-      [task, 0, todoId]
+      "UPDATE public.todo SET value = $1, description = $2 WHERE id = $3 RETURNING *",
+      [value, 0, todoId]
     );
 
     if (result.rowCount === 0) {
