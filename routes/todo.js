@@ -49,7 +49,7 @@ router.put("/:id", async (req, res) => {
   try {
     const client = await pool.connect();
     const result = await client.query(
-      "UPDATE public.todo SET value = $1, description = $2 WHERE id = $3 RETURNING *",
+      "UPDATE public.todo SET value = $1, description = $2 WHERE key = $3 RETURNING *",
       [value, 0, todoId]
     );
 
@@ -73,7 +73,7 @@ router.delete("/:id", async (req, res) => {
   try {
     const client = await pool.connect();
     const result = await client.query(
-      "DELETE FROM public.todo WHERE id = $1 RETURNING *",
+      "DELETE FROM public.todo WHERE key = $1 RETURNING *",
       [todoId]
     );
 
