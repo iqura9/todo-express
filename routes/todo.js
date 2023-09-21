@@ -49,7 +49,7 @@ router.put("/:id", async (req, res) => {
   try {
     const client = await pool.connect();
     const result = await client.query(
-      "UPDATE public.todo SET value = $1, description = $2 WHERE key = $3 RETURNING *",
+      "UPDATE public.todo SET value = $1, status = $2 WHERE key = $3 RETURNING *",
       [value, 0, todoId]
     );
 
