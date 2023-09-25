@@ -9,6 +9,23 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT,
 });
+async function createTodoTable() {
+  const createTableQuery = `
+    CREATE TABLE IF NOT EXISTS public.todo (
+      key SERIAL PRIMARY KEY,
+      value TEXT,
+      status INTEGER
+    )
+  `;
+  try {
+    const client = await pool.connect();
+    await client.query(createTableQuery);
+    client.release();
+  } catch (err) {
+    console.error("Error creating todo table:", err);
+  }
+}
+createTodoTable();
 
 // GET all todos
 router.get("/", async (req, res) => {
