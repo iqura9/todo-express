@@ -28,11 +28,29 @@ async function createTodoTable() {
 createTodoTable();
 
 // GET all todos
+// GET all todos with pagination
 router.get("/", async (req, res) => {
   try {
     const client = await pool.connect();
-    const result = await client.query("SELECT * FROM public.todo");
-    res.status(200).send(result.rows);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    const countQuery = "SELECT COUNT(*) FROM public.todo";
+    const resultCount = await client.query(countQuery);
+    const totalCount = parseInt(resultCount.rows[0].count);
+
+    const resultQuery = "SELECT * FROM public.todo LIMIT $1 OFFSET $2";
+    const result = await client.query(resultQuery, [limit, offset]);
+
+    const response = {
+      page,
+      limit,
+      totalCount,
+      todos: result.rows,
+    };
+
+    res.status(200).send(response);
     client.release();
   } catch (err) {
     console.error(err);
